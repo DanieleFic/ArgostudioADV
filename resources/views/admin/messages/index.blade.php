@@ -13,8 +13,8 @@
                 {{ session('success') }}
             </div>
         @endif
-        @if (count($activeMessages) > 0)
-
+        @if (count($activeMessages) || count($notActiveMessages) > 0)
+            {{-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@ MESSAGGI ATTIVI @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --}}
             <div class="row justify-content-center">
 
                 <div class="col-12">
@@ -23,7 +23,7 @@
                         <h1>
                             Hai
                             ({{ count($activeMessages) }})
-                            @if (count($activeMessages) == 1)
+                            @if (count($activeMessages) >= 1)
                                 messaggio attivo
                             @else
                                 messaggi attivi
@@ -124,7 +124,7 @@
                     @endif
                 </div>
             </div>
-
+            {{-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@ MESSAGGI ATTIVI @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --}}
             <div class="row justify-content-center">
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center">
@@ -231,11 +231,13 @@
                     @else
                         <div>Non ci sono messaggi!</div>
                     @endif
-                @else
-                    <div>Non ci sono messaggi!</div>
                 </div>
+            @else
+                <div>Non ci sono messaggi!</div>
             </div>
-        @endif
+    </div>
+
+    @endif
 
     </div>
 @endsection

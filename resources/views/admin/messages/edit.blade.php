@@ -25,13 +25,14 @@
                     <div class="form-group">
                         <label for="exampleInputEmail1" class="form-label">Tipo del messaggio</label>
                         <select name="tipes">
-                            <option value="A" {{ $message->types == 'A' ? 'selected' : '' }}>A</option>
-                            <option value="B" {{ $message->types == 'B' ? 'selected' : '' }}>B</option>
+                            <option value="A" {{ $message->tipes == 'A' ? 'selected' : '' }}>A</option>
+                            <option value="B" {{ $message->tipes == 'B' ? 'selected' : '' }}>B</option>
                         </select>
                         @error('tipes')
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                     </div>
+
                     <div class="form-group">
                         <label for="exampleInputEmail1" class="form-label">Attivo</label>
                         <select name="active">
