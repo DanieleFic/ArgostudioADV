@@ -10942,7 +10942,7 @@ a.text-dark:focus {
 .ms_cardmessage_notactive {
   box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  background-color: rgb(245, 97, 97);
+  background-color: rgb(225, 134, 134);
   word-break: break-all;
 }
 
