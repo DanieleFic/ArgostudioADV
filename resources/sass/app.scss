@@ -1,0 +1,25 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+// Variables
+@import 'variables';
+@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css';
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+@import './admin/partials/messages/index';
+.ms_buttonblue {
+    width: 100px;
+    background-color: rgba(#003062, 0.9);
+    /*     padding: 3px 3px; */
+    border: 0;
+}
+
+.btn_edit {
+    background-color: rgb(68, 94, 64);
+    width: 100%;
+    border: 0;
+}
+
+a {
+    color: white;
+    width: 100%;
+}
