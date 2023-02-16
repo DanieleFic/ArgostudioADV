@@ -7,237 +7,177 @@
 @section('content')
 
     <div class="container py-5">
+        <a class="btn btn-info" href="javascript:void(0)" id="createNewMessage"> Add New Message</a>
         {{--     @dd($messages) --}}
         @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
-        @if (count($activeMessages) || count($notActiveMessages) > 0)
-            {{-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@ MESSAGGI ATTIVI @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --}}
-            <div class="row justify-content-center">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <div class="alert alert-success" id="message-success" style="display:none;"></div>
+        <div class="alert alert-success" id="message-success-delete" style="display:none;">Messaggio eliminato</div>
+        <table class="table" id="myTable">
+            <thead>
+                <tr class="text-center">
+                    <th scope="col">id</th>
+                    <th scope="col">Testo</th>
+                    <th scope="col">Url</th>
+                    <th scope="col">note</th>
+                    <th scope="col">tipo</th>
+                    <th scope="col">data inizio</th>
+                    <th scope="col">data fine</th>
+                    <th scope="col">attivo</th>
+                    <th scope="col">Azioni</th>
 
-                <div class="col-12">
 
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1>
-                            Hai
-                            ({{ count($activeMessages) }})
-                            @if (count($activeMessages) >= 1)
-                                messaggio attivo
-                            @else
-                                messaggi attivi
-                            @endif
-                        </h1>
+                </tr>
+            </thead>
+            {{-- <tbody>
+                @foreach ($messages as $message)
+                    <tr>
+                        <th scope="row">{{ $message->id }}</th>
+                        <td>{{ $message->text }}</td>
+                        <td>{{ $message->note }}</td>
+                        <td>{{ $message->url }}</td>
+                        <td>{{ $message->start_time }}</td>
+                        <td>{{ $message->end_time }}</td>
+                        <td>{{ $message->active }}</td>
+                        <td>{{ $message->tipes }}</td>
+                    </tr>
+                @endforeach
+            </tbody> --}}
+        </table>
+        {{-- MODAL FOR ADD --}}
+        <div class="modal fade" id="modalStore" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">Aggiungi nuovo messaggio</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </div>
 
-                <div class='col-12'>
-                    @if (count($activeMessages) > 0)
-
-                        @foreach ($activeMessages as $message)
-                            <div class="ms_cardmessage_active  my-4">
-                                <div class="ms_info  p-3 d-flex align-items-center justify-content-between">
-                                    <div>
-                                        <h3 class="m-0">Tipo di messaggio :{{ $message->tipes }}</h3>
-                                    </div>
-                                    <div class="d-flex">
-                                        <div class="p-2">
-                                            <i class="fa-solid fa-calendar-week p-2"></i>
-                                            <p class="m-0">data inizio:</p>
-                                            <p class="mb-2">{{ $startDate }}</p>
-                                        </div>
-                                        <div class="p-2">
-                                            <i class="fa-solid fa-calendar-week p-2"></i>
-                                            <p class="m-0">data fine:</p>
-                                            <p>{{ $endDate }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="ms_text p-4">
-                                    <h3>url del messaggio</h3>
-                                    {{ $message->url }}
-                                </div>
-
-                                <div class="ms_text p-4">
-                                    <h3>testo</h3>
-                                    {{ $message->text }}
-                                </div>
-                                <div class="ms_text p-4">
-                                    <h3>nota</h3>
-                                    {{ $message->note }}
-                                </div>
-
-                                <div class="ms_buttonbox d-flex ">
-
-                                    <a href="{{ route('admin.messages.show', [Auth::user()->id, $message->id]) }}">
-                                        <button type="button" class="ms_buttonblue text-white rounded-left">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </button>
-                                    </a>
-                                    <a href="{{ route('admin.messages.edit', [Auth::user()->id, $message->id]) }}"><button
-                                            type="button" class="btn-secondary border-0  rounded-left btn_edit"><i
-                                                class="fa-solid fa-pen-to-square"></i></button></a>
-
-                                    <button type="button" class="btn-secondary border-0  rounded-right w-50"
-                                        data-toggle="modal" data-target="#exampleModal{{ $message->id }}">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </button>
-
-                                </div>
+                    <form id="postForm">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="text">Testo</label>
+                                <input type="text-area" class="form-control" id="text" name="text">
                             </div>
-                            <div class="modal fade" id="exampleModal{{ $message->id }}" tabindex="-1" role="dialog"
-                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Cancella</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            Sicuro di voler cancellare questo messaggio? {{ $message->id }}
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-dismiss="modal">Indietro</button>
-                                            <form
-                                                action="{{ route('admin.messages.destroy', [Auth::user()->id, $message->id]) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn ms_buttonblue text-white"
-                                                    data-toggle="modal" data-target="#exampleModal">
-                                                    Cancella
-                                                </button>
-
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label for="url">URL</label>
+                                <input type="text" class="form-control" id="url" name="url">
                             </div>
-                        @endforeach
-                    @else
-                        <div>Non ci sono messaggi!</div>
-                    @endif
+                            <div class="form-group">
+                                <label for="note">Note</label>
+                                <input type="text" class="form-control" id="note" name="note">
+                            </div>
+                            <div class="form-group">
+                                {{-- <label for="tipes">Tipo</label>
+                                <input type="text" class="form-control" id="tipes" name="tipes"> --}}
+                                <label for="tipes">Tipo</label>
+                                <select name="tipes" id="tipes">
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="start_time">Inizio</label>
+                                <input type="date" class="form-control" id="start_time" name="start_time">
+                            </div>
+                            <div class="form-group">
+                                <label for="end_time">Fine</label>
+                                <input type="date" class="form-control" id="end_time" name="end_time">
+                            </div>
+                            <div class="form-group">
+                                <label for="active">Attivo</label>
+                                {{-- <input type="text" class="form-control" id="active" name="active"> --}}
+                                <label for="active">Attivo</label>
+                                <select name="active" id="active">
+                                    <option value="1">Si</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                                <button class="btn btn-primary" type="submit">Salva</button>
+                            </div>
+                        </div>
+                    </form>
+
+
                 </div>
             </div>
-            {{-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@ MESSAGGI ATTIVI @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --}}
-            <div class="row justify-content-center">
-                <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1>
-                            Hai
-                            ({{ count($notActiveMessages) }})
-                            @if (count($notActiveMessages) == 1)
-                                messaggio non attivo
-                            @else
-                                messaggi non attivi
-                            @endif
-                        </h1>
+        </div>
+
+        {{-- MODAL FOR EDIT --}}
+        <div id="modalEdit" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal Header</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
-                </div>
-
-                <div class='col-12'>
-                    @if (count($notActiveMessages) > 0)
-                        @foreach ($notActiveMessages as $message)
-                            <div class="ms_cardmessage_notactive  my-4">
-                                <div class="ms_info  p-3 d-flex align-items-center justify-content-between">
-                                    <div>
-                                        <p></p>
-                                        <h3 class="m-0">Tipo di messaggio :{{ $message->tipes }}</h3>
-                                    </div>
-                                    <div class="d-flex">
-                                        <div class="p-2">
-                                            <i class="fa-solid fa-calendar-week p-2"></i>
-                                            <p class="m-0">data inizio:</p>
-                                            <p class="mb-2">{{ $startDate }}</p>
-                                        </div>
-                                        <div class="p-2">
-                                            <i class="fa-solid fa-calendar-week p-2"></i>
-                                            <p class="m-0">data fine:</p>
-                                            <p>{{ $endDate }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="ms_text p-4">
-                                    <h3>url del messaggio</h3>
-                                    {{ $message->url }}
-                                </div>
-
-                                <div class="ms_text p-4">
-                                    <h3>testo</h3>
-                                    {{ $message->text }}
-                                </div>
-                                <div class="ms_text p-4">
-                                    <h3>nota</h3>
-                                    {{ $message->note }}
-                                </div>
-
-                                <div class="ms_buttonbox d-flex ">
-
-                                    <a href="{{ route('admin.messages.show', [Auth::user()->id, $message->id]) }}">
-                                        <button type="button" class="ms_buttonblue text-white rounded-left">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </button>
-                                    </a>
-                                    <a href="{{ route('admin.messages.edit', [Auth::user()->id, $message->id]) }}"><button
-                                            type="button" class="btn-secondary border-0  rounded-left btn_edit"><i
-                                                class="fa-solid fa-pen-to-square"></i></button></a>
-
-                                    <button type="button" class="btn-secondary border-0  rounded-right w-50"
-                                        data-toggle="modal" data-target="#exampleModal{{ $message->id }}">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </button>
-
-                                </div>
+                    <form id="update">
+                        <div class="modal-body">
+                            <input type="hidden" name="id" class="id">
+                            <div class="form-group">
+                                <label for="text">Testo</label>
+                                <input type="text-area" class="form-control text" id="text" name="text">
                             </div>
-                            <!--------------------------------- Modal ------------------------------>
-                            <div class="modal fade" id="exampleModal{{ $message->id }}" tabindex="-1" role="dialog"
-                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Cancella</h5>
-                                            <button type="button" class="close" data-dismiss="modal"
-                                                aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            Sicuro di voler cancellare questo messaggio?{{ $message->id }}
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-dismiss="modal">Indietro</button>
-                                            <form
-                                                action="{{ route('admin.messages.destroy', [Auth::user()->id, $message->id]) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn ms_buttonblue text-white  btn-danger "
-                                                    data-toggle="modal" data-target="#exampleModal">
-                                                    Cancella
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label for="url">URL</label>
+                                <input type="text" class="form-control url" id="url" name="url">
                             </div>
-                        @endforeach
-                    @else
-                        <div>Non ci sono messaggi!</div>
-                    @endif
+                            <div class="form-group">
+                                <label for="note">Note</label>
+                                <input type="text" class="form-control note" id="note" name="note">
+                            </div>
+                            <div class="form-group">
+                                {{-- <label for="tipes">Tipo</label>
+                                <input type="text" class="form-control" id="tipes" name="tipes"> --}}
+                                <label for="tipes">Tipo</label>
+                                <select name="tipes" id="tipes" class="tipes">
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="start_time">Inizio</label>
+                                <input type="date" class="form-control start_time" id="start_time" name="start_time">
+                            </div>
+                            <div class="form-group">
+                                <label for="end_time">Fine</label>
+                                <input type="date" class="form-control end_time" id="end_time" name="end_time">
+                            </div>
+                            <div class="form-group">
+                                <label for="active">Attivo</label>
+                                {{-- <input type="text" class="form-control" id="active" name="active"> --}}
+                                <label for="active">Attivo</label>
+                                <select name="active" id="active" class="active">
+                                    <option value="1">Si</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="#" class="btn btn-primary">Update</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
                 </div>
-            @else
-                <div>Non ci sono messaggi!</div>
             </div>
-    </div>
+        </div>
 
-    @endif
-
-    </div>
-@endsection
+    @endsection

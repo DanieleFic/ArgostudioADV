@@ -29,7 +29,9 @@ Route::middleware('auth')
         Route::get('/', 'HomeController@index')->name('home');
         Route::resource('/user', 'UserController');/* ->except(['edit', 'update']); */
         Route::resource('/user/{user:id}/messages', 'MessagesController');
-
+        /* Route::resource('user.messages', MessagesController::class); */
     });
 
+    Route::get('messages', 'Admin\MessagesController@getMessages')->name('get.messages');
+    /* Route::post('/editMessage','Admin\MessagesController@edit'); */
     Auth::routes();
