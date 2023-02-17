@@ -21,6 +21,7 @@
         <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     </head>
 
     <body>
@@ -95,7 +96,11 @@
 
     <script src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
+        toastr.options = {
+            "positionClass": "toast-bottom-right"
+        }
         $(document).ready(function() {
             $('#myTable').DataTable({
                 processing: true,
@@ -210,6 +215,8 @@
 
                             $('#message-success').show();
                             cleaner()
+                            toastr.success(
+                                'Messaggio aggiunto con successo'); // mostra la notifica
                         },
                         error: function(data) {
                             console.log('Error:', data);
@@ -274,7 +281,9 @@
             });
 
             //UPDATE DEL MESSAGGIO
+            //UPDATE DEL MESSAGGIO
             $(document).on('submit', '#modalEdit', function(e) {
+                e.preventDefault(); //previene l'aggiornamento della pagina predefinito del form
                 @if (Auth::check())
                     var formData = $("form#update").serializeArray();
                     console.log(formData)
@@ -303,6 +312,8 @@
                                 cleaner();
                                 $('#modalEdit').modal('hide');
                                 console.log('success update');
+                                toastr.success(
+                                'Messaggio modificato con successo'); // mostra la notifica
                             } else {
                                 console.log('failed');
                             }
@@ -317,6 +328,7 @@
                     });
                 @endif
             });
+
 
 
             //DELETE DEL MESSAGGIO
@@ -347,6 +359,8 @@
                                     console.log("eliminato");
                                     $('#message-success-delete').show();
                                     refresh();
+                                    toastr.success(
+                                'Messaggio cancellato con successo'); // mostra la notifica
                                 },
                                 error: function(data) {
                                     console.log("errore")

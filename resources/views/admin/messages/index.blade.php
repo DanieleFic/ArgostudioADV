@@ -8,12 +8,12 @@
 
     <div class="container py-5">
         <a class="btn btn-info" href="javascript:void(0)" id="createNewMessage"> Add New Message</a>
-        {{--     @dd($messages) --}}
-        @if (session('success'))
-            <div class="alert alert-success">
+
+        {{--  @if (session('success'))
+            <div id="successMessage" class="alert alert-success">
                 {{ session('success') }}
             </div>
-        @endif
+        @endif--}}
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -23,8 +23,8 @@
                 </ul>
             </div>
         @endif
-        <div class="alert alert-success" id="message-success" style="display:none;"></div>
-        <div class="alert alert-success" id="message-success-delete" style="display:none;">Messaggio eliminato</div>
+        {{--         <div class="alert alert-success" id="message-success" style="display:none;"></div> --}}
+        {{--         <div class="alert alert-success" id="message-success-delete" style="display:none;">Messaggio eliminato</div> --}}
         <table class="table" id="myTable">
             <thead>
                 <tr class="text-center">
@@ -100,7 +100,6 @@
                                 <input type="date" class="form-control" id="end_time" name="end_time">
                             </div>
                             <div class="form-group">
-                                <label for="active">Attivo</label>
                                 {{-- <input type="text" class="form-control" id="active" name="active"> --}}
                                 <label for="active">Attivo</label>
                                 <select name="active" id="active">
@@ -164,7 +163,6 @@
                             <div class="form-group">
                                 <label for="active">Attivo</label>
                                 {{-- <input type="text" class="form-control" id="active" name="active"> --}}
-                                <label for="active">Attivo</label>
                                 <select name="active" id="active" class="active">
                                     <option value="1">Si</option>
                                     <option value="0">No</option>
